@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.*;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 @Entity(name="UserName")
@@ -11,8 +13,15 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotBlank(message = "Name can't be blank")
+    @Size(min=4,max=31, message = "Name must be between 4 and 31 characters")
     private String name;
+    @NotBlank(message = "Surname can't be blank")
+    @Size(min=4,max=31, message = "Surname must be between 4 and 31 characters")
     private String surname;
+
+    @PastOrPresent(message = "Date can't be from future")
+    @NotNull(message = "Date can't be null")
     private LocalDate birthDate;
 
     @Override

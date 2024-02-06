@@ -1,10 +1,11 @@
 package com.javacourse.section8.User;
 
 import com.javacourse.section8.Exceptions.UserNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
+
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -19,9 +20,9 @@ public class UserController {
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
 
-        User user = new User(0,"Mateusz","Kuzera", LocalDate.now());
-        User user1 = new User(1,"Mateusz2","Kuzera2", LocalDate.now());
-        User user2 = new User(2,"Mateusz3","Kuzera3", LocalDate.now());
+        User user = new User(0,"Mateusz","Kuzera", LocalDate.now().minusDays(1));
+        User user1 = new User(1,"Mateusz2","Kuzera2", LocalDate.now().minusDays(1));
+        User user2 = new User(2,"Mateusz3","Kuzera3", LocalDate.now().minusDays(1));
         userRepository.save(user);
         userRepository.save(user2);
         userRepository.save(user1);
@@ -47,11 +48,18 @@ public class UserController {
     }
     @DeleteMapping(value = "/webusers/{iduser}")
     public void deleteUser(@PathVariable int iduser){
-        userRepository.deleteById(iduser);
+
+        Optional<User> referenceById = userRepository.findById(iduser);
+        if(referenceById.isPresent()){
+            userRepository.deleteById(iduser);
+        }
+        else{
+            throw new UserNotFoundException(String.format("User of id: %x not found" , iduser));
+        }
     }
 
     @PostMapping(value="/webusers")
-    public ResponseEntity<User> addUser(@RequestBody User user){
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user){
         User save = userRepository.save(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(save.getId()).toUri();
