@@ -1,21 +1,27 @@
 package com.javacourse.section8.User;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.javacourse.section8.Posts.Post;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.util.List;
+
 @Entity(name="UserName")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @JsonProperty("first_name")
     @NotBlank(message = "Name can't be blank")
     @Size(min=4,max=31, message = "Name must be between 4 and 31 characters")
     private String name;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Post> postList;
     @NotBlank(message = "Surname can't be blank")
     @Size(min=4,max=31, message = "Surname must be between 4 and 31 characters")
     private String surname;

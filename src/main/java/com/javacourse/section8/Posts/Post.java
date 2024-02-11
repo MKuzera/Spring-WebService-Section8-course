@@ -1,7 +1,8 @@
 package com.javacourse.section8.Posts;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.javacourse.section8.User.User;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 @Entity
@@ -12,6 +13,9 @@ public class Post {
     private String description;
     private LocalDate dateAdded;
     private Integer addedByUser;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User user;
 
     public Integer getAddedByUser() {
         return addedByUser;

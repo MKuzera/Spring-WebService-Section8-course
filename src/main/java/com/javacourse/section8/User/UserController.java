@@ -1,7 +1,9 @@
 package com.javacourse.section8.User;
-
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import com.javacourse.section8.Exceptions.UserNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,15 +32,12 @@ public class UserController {
     }
 
     @GetMapping(value = "/webusers/{id}")
-    public Optional<User> getUser(@PathVariable int id){
-        Optional<User> user = userRepository.findById(id);
-
-        if(user.isPresent()){
-            return user;
-        }
-        else{
-            throw new UserNotFoundException("User id{" + id+"} not found");
-        }
+    public EntityModel<User> getUser(@PathVariable int id){
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User id{" + id+"} not found"));
+        EntityModel<User> entityModel = EntityModel.of(user);
+        WebMvcLinkBuilder linkBuilder= linkTo(methodOn(this.getClass()).getListOfUsers());
+        entityModel.add(linkBuilder.withRel("all-users"));
+        return entityModel;
 
     }
 
