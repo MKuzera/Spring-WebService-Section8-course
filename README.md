@@ -1,6 +1,6 @@
 This is a my own implementation of section 8 of spring course. 
 
-In this section i learned:
+In this section I learned:
 
 -how to use JPA/Hibernate with usage of H2 database
 
